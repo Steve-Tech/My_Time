@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My_Time</title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="description" content="A simple time synchronisation web app">
+    <meta name="author" content="Steve-Tech">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    
+    <link rel="preload" href="style.css" as="style">
+    <link rel="preload" href="main.js" as="script">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="title"><span>My_Time</span><span>By: <a href="https://github.com/Steve-Tech">Steve-Tech</a></span></div>
+    <h2 id="difference">Synchronizing</h2>
+    <p class="details">Network latency was <span id="latency">--</span>ms.</p>
+    <h1 id="time">--:--:--</h1>
+    <h3 id="date"></h3>
+    <script src="script.js"></script>
+</body>
+</html>

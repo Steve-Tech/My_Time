@@ -1,0 +1,11 @@
+[Unit]
+Description=My_Time service
+After=multi-user.target
+
+[Service]
+Type=simple
+Restart=always
+ExecStart=/usr/bin/python3 /opt/my_time/My_Time.py
+
+[Install]
+WantedBy=multi-user.target
