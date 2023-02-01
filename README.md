@@ -1,15 +1,21 @@
 # My_Time
 
-A simple time synchronisation web app similar to [time.is](https://time.is/) but fully open source and self-hostable. Perfect for those who already have their own Stratum 1 NTP server using GPS time or possibly even an atomic clock! My_Time uses a method similar to that of NTP to synchronise the time on your server with the time on your client's browser. Thanks to Kevin Sookocheff for his write up on [how NTP works](https://sookocheff.com/post/time/how-does-ntp-work/)!
+A simple time synchronisation web app similar to [time.is](https://time.is/) but fully open source and self-hostable. Perfect for those who already have their own Stratum 1 NTP server using GPS time or possibly even an atomic clock!
+
+My_Time uses a method similar to that of NTP to synchronise the time on your server with the time on your client's browser. Thanks to Kevin Sookocheff for his write up on [how NTP works](https://sookocheff.com/post/time/how-does-ntp-work/)!
 
 ## Installation
 
 ### Docker
 
-1. Install Docker and Docker Compose
-2. Run `docker build -t my_time .` to build the image
-3. Run `docker run -d -p 8080:8080 --name My_Time my_time` to start the container
-4. Navigate to `http://localhost:8080` to view the app
+- Start using Docker Hub `docker run -d -p 8080:8080 --name My_Time stevetech8/my_time`
+- Start using GitHub Container Registry `docker run -d -p 8080:8080 --name My_Time ghcr.io/steve-tech/my_time`
+
+#### Build from source
+
+1. Run `docker build -t my_time .` to build the image
+2. Run `docker run -d -p 8080:8080 --name My_Time my_time` to start the container
+3. Navigate to `http://localhost:8080` to view the app
 
 ### Systemd
 

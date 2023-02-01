@@ -7,27 +7,34 @@ import aiohttp
 from aiohttp import web
 from time import time
 
-enable_websockets = False
+# Enable websockets for more responsive time sync
+# Not used in the web app, but can be used for other things
+enable_websockets: bool = False
 
-async def websocket(request):
+async def websocket(request: web.Request) -> web.WebSocketResponse:
+    """Return the server's time in JSON format"""
+    
     ws = web.WebSocketResponse()
     await ws.prepare(request)
 
     async for msg in ws:
-        t2 = time()
+        t2: float = time()
         if msg.type == aiohttp.WSMsgType.TEXT or msg.type == aiohttp.WSMsgType.BINARY:
             await ws.send_json({"t2": t2, "t3": time()})
-
-    print('websocket connection closed')
-
+    
     return ws
 
 
-async def get_file(file):
+# Used to serve static files
+async def get_file(file) -> web.FileResponse:
+    """Serve a file from the web directory"""
+
     return web.FileResponse("./web/" + file)
 
 
-async def sync_time(request):
+async def sync_time(request: web.Request) -> web.Response:
+    """Return the server's time in JSON format"""
+
     t2 = time()
     match (request.method):
         case "GET":
@@ -36,7 +43,9 @@ async def sync_time(request):
             return web.Response()
 
 
-def main():
+def main() -> None:
+    """My_Time main function, starts the web server"""
+
     app = web.Application()
     app.add_routes([
         web.get('/', lambda _ : get_file('index.html')),
@@ -49,6 +58,7 @@ def main():
         app.add_routes([web.get('/ws', websocket)])
 
     web.run_app(app)
+
 
 if __name__ == "__main__":
     main()
