@@ -8,8 +8,7 @@ from aiohttp import web
 from time import time
 
 # Enable websockets for more responsive time sync
-# Not used in the web app, but can be used for other things
-enable_websockets: bool = False
+enable_websockets: bool = True
 
 async def websocket(request: web.Request) -> web.WebSocketResponse:
     """Return the server's time in JSON format"""
@@ -20,7 +19,7 @@ async def websocket(request: web.Request) -> web.WebSocketResponse:
     async for msg in ws:
         t2: float = time()
         if msg.type == aiohttp.WSMsgType.TEXT or msg.type == aiohttp.WSMsgType.BINARY:
-            await ws.send_json({"t2": t2, "t3": time()})
+            await ws.send_json({"t1": msg.data, "t2": t2, "t3": time()})
     
     return ws
 
@@ -35,7 +34,7 @@ async def get_file(file) -> web.FileResponse:
 async def sync_time(request: web.Request) -> web.Response:
     """Return the server's time in JSON format"""
 
-    t2 = time()
+    t2: float = time()
     match (request.method):
         case "GET":
             return web.json_response({"t2": t2, "t3": time()})

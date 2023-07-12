@@ -4,10 +4,53 @@
 // Set this to the URL of the My_Time server
 const server = "/sync";
 
-// Variable used by the sync() function to adjust the time
+let useWebsocket = true && 'WebSocket' in window;
+const doubleTry = true; // Usually faster on the second request
+// Variables used by the WebSocket sync
+let socket;
+let wantSync = false;
+
+if (useWebsocket) {
+    socket = new WebSocket(`ws://${window.location.host}/ws`);
+
+    socket.addEventListener("open", () => {
+        if (wantSync) {
+            wantSync = false;
+            syncWS();
+            if (doubleTry)
+                setTimeout(syncWS, 1000);
+        }
+    });
+
+    socket.addEventListener("error", () => {
+        console.error("WebSocket error fallback to HTTP sync");
+        useWebsocket = false;
+    });
+
+    socket.addEventListener("message", (event) => {
+        t4 = new Date().getTime() / 1000;
+        let data = JSON.parse(event.data);
+        updateClock(data['t1'], data['t2'], data['t3'], t4);
+    });
+}
+
+// Variable used by the updateClock() function to adjust the time
 let adjustment = 0;
 
-function sync() {
+function updateClock(t1, t2, t3, t4) {
+    let theta = ((t2 - t1) + (t3 - t4)) / 2;
+    let delay = (t4 - t1) - (t3 - t2);
+
+    adjustment = theta;
+    let absolute = Math.abs(theta);
+    let rounded = Math.round(absolute * 1000) / 1000;
+    let how = `${theta > 0 ? "behind" : "ahead"}`
+    document.getElementById("difference").innerHTML = "Your clock is " +
+        (rounded === 0 ? `<abbr title="${absolute} seconds ${how}">exactly</abbr> in sync.` : `<abbr title="${absolute} seconds ${how}">${rounded}</abbr> seconds ${how}.`);
+    document.getElementById("latency").innerText = Math.round(delay * 1000);
+}
+
+function syncHTTP() {
     document.getElementById("difference").innerText = "Synchronizing...";
     document.getElementById("latency").innerText = "--";
 
@@ -27,21 +70,24 @@ function sync() {
             })
             .then((response) => response.json())
             .then((data) => {
-                let t2 = data['t2'];
-                let t3 = data['t3'];
-
-                let theta = ((t2 - t1) + (t3 - t4)) / 2;
-                let delay = (t4 - t1) - (t3 - t2);
-
-                adjustment = theta;
-                let absolute = Math.abs(theta);
-                let rounded = Math.round(absolute * 1000) / 1000;
-                let how = `${theta > 0 ? "behind" : "ahead"}`
-                document.getElementById("difference").innerHTML = "Your clock is " +
-                    (rounded === 0 ? `<abbr title="${absolute} seconds ${how}">exactly</abbr> in sync.` : `<abbr title="${absolute} seconds ${how}">${rounded}</abbr> seconds ${how}.`);
-                document.getElementById("latency").innerText = Math.round(delay * 1000);
+                updateClock(t1, data['t2'], data['t3'], t4);
             });
     });
+}
+
+function syncWS() {
+    if (socket.readyState === WebSocket.OPEN) {
+        document.getElementById("difference").innerText = "Synchronizing...";
+        document.getElementById("latency").innerText = "--";
+        t1 = new Date().getTime() / 1000;
+        socket.send(t1);
+    } else {
+        wantSync = true;
+    }
+}
+
+function sync() {
+    return useWebsocket ? syncWS() : syncHTTP();
 }
 
 function minute(time) {
