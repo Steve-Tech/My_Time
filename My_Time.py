@@ -38,6 +38,8 @@ async def sync_time(request: web.Request) -> web.Response:
     match (request.method):
         case "GET":
             return web.json_response({"t2": t2, "t3": time()})
+        case "POST":
+            return web.json_response({"t1": await request.text(), "t2": t2, "t3": time()})
         case "HEAD":
             return web.Response()
 
@@ -51,7 +53,8 @@ def main() -> None:
         web.get('/style.css', lambda _ : get_file('style.css')),
         web.get('/script.js', lambda _ : get_file('script.js')),
         web.get('/favicon.svg', lambda _ : get_file('favicon.svg')),
-        web.get('/sync', sync_time)])
+        web.get('/sync', sync_time),
+        web.post('/sync', sync_time)])
 
     if enable_websockets:
         app.add_routes([web.get('/ws', websocket)])
