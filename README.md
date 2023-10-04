@@ -9,7 +9,7 @@ My_Time uses a method similar to that of NTP to synchronise the time on your ser
 ### Docker
 
 - Start using Docker Hub `docker run -d -p 8080:8080 --name My_Time stevetech8/my_time`
-- Start using GitHub Container Registry `docker run -d -p 8080:8080 --name My_Time ghcr.io/steve-tech/my_time`
+- Start using GitHub Container Registry `docker run -d -p 8080:8080 --name My_Time ghcr.io/steve-tech/my_time:main`
 
 #### Build from source
 
