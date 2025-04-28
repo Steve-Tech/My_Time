@@ -11,7 +11,7 @@ let socket;
 let wantSync = false;
 
 if (useWebsocket) {
-    socket = new WebSocket(`ws://${window.location.host}/ws`);
+    socket = new WebSocket(`${window.location.protocol.replace(/^http/, 'ws')}//${window.location.host}/ws`);
 
     socket.addEventListener("open", () => {
         if (wantSync) {
